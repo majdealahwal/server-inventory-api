@@ -23,5 +23,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Say hello
-        run: echo "CI pipeline is working"
+      - name: Run linter (flake8)
+        run: flake8 .
+
+      - name: Run tests (pytest)
+        run: pytest -q --junitxml=report.xml
