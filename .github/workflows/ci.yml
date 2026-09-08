@@ -39,7 +39,6 @@ jobs:
         with:
           name: pytest-report-${{ matrix.python-version }}
           path: report.xml
-
   smoke:
     needs: test
     runs-on: ubuntu-latest
@@ -56,6 +55,8 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Start the API
+        env:
+          APP_VERSION: ci-${{ github.run_number }}
         run: |
           python app.py &
           sleep 5
@@ -71,3 +72,9 @@ jobs:
           response=$(curl -s http://127.0.0.1:5000/readyz)
           echo "Response: $response"
           echo "$response" | grep -q '"servers_loaded":9'
+
+      - name: Check /version
+        run: |
+          response=$(curl -s http://127.0.0.1:5000/version)
+          echo "Response: $response"
+          echo "$response" | grep -q "ci-${{ github.run_number }}"
